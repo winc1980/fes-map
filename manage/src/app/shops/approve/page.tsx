@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function ShopsPage() {
+export default function ShopsApprovePage() {
   return (
     <div className="flex flex-col items-center justify-center h-screen">
       <h1 className="text-2xl font-bold">Shops Page</h1>
