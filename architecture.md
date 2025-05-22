@@ -9,13 +9,17 @@ architecture-beta
     service FMV(logos:nextjs)[FesMap Visitors] in client
 
     group api(logos:firebase)[Serverless Api]
-      service ApiGw(logos:google-cloud)[API Gateway] in api
-      service Auth(logos:firebase)[Auth Service] in api
-      service Authorize(logos:firebase)[Authorize Service] in api
-      service Supabase(logos:supabase-icon)[Supabase Postgres] in api
-      service Wasabi(logos:aws-s3)[Wasabi AWSS3] in api
-      service Ext1(internet)[LIFF API] in api
-      service Ext2(logos:mapbox-icon)[MapBox API] in api
+      group apiGw[API Gateway] in api
+        service cloudFunctions(logos:google-cloud)[Cloud Functions for Firebase] in apiGw
+      group MaruServices[Maru Services] in api
+        service Auth(logos:firebase)[Auth Service] in MaruServices
+        service Authorize(logos:firebase)[Authorize Service] in MaruServices
+      group CommonServices[Common Services] in api
+        service Supabase(logos:supabase-icon)[Supabase Postgres] in CommonServices
+        service Wasabi(logos:aws-s3)[Wasabi AWSS3] in CommonServices
+      group FesmapServices[FesMap Services] in api
+        service Ext1(internet)[LIFF API] in FesmapServices
+        service Ext2(logos:mapbox-icon)[MapBox API] in FesmapServices
 
     %%group mainApi(logos:aws-lambda)[Main Api] in api
       %%service UserInfo(database)[User Info] in mainApi
@@ -44,7 +48,7 @@ architecture-beta
   jAppsApi3:B -- T:jAppsApi4
   jAppsApic:R -- L:PrivateApi
 
-  PrivateApi:R -- L:ApiGw
+  PrivateApi:R -- L:cloudFunctions
 
 
   junction jGwExt1
@@ -66,6 +70,6 @@ architecture-beta
   jGwExt3:B -- T:jGwExt4
   jGwExt4:B -- T:jGwExt5
   jGwExt5:B -- T:jGwExt6
-  jGwExt3:L -- R:ApiGw
+  jGwExt3:L -- R:cloudFunctions
 
 ```
