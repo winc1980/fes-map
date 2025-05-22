@@ -2,10 +2,9 @@
 
 import { useState, useEffect } from "react"
 import { Navigation } from "@/components/ui/navigation"
-import { PointCard } from "@/components/ui/point-card"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Progress } from "@/components/ui/progress"
-import { Gift } from "lucide-react"
+import { PointCard } from "@/components/points/point-card"
+import { Rewards } from "@/components/points/rewards"
+import { NewPointsNotification } from "@/components/points/new-points-notification"
 
 export default function PointsPage() {
   const [totalPoints, setTotalPoints] = useState(280)
@@ -28,7 +27,9 @@ export default function PointsPage() {
     return () => clearInterval(interval)
   }, [])
 
-  const recentPoints = [
+  const usernameMock = "田中太郎"
+
+  const recentPointsMock = [
     {
       amount: 50,
       source: "メインステージQRコード",
@@ -47,7 +48,7 @@ export default function PointsPage() {
   ]
 
   // 報酬レベルの設定
-  const rewards = [
+  const rewardsMock = [
     { points: 100, name: "オリジナルステッカー", claimed: true },
     { points: 300, name: "限定Tシャツ", claimed: false },
     { points: 500, name: "VIP特典", claimed: false },
@@ -57,41 +58,11 @@ export default function PointsPage() {
     <main className="container pb-28 pt-4">
       <h1 className="mb-4 text-2xl font-bold">ポイント</h1>
 
-      {showNewPoints && (
-        <div className="mb-4 animate-pulse rounded-lg bg-green-100 p-3 text-center text-green-800">
-          <span className="text-xl font-bold">+{newPoints} ポイント獲得！</span>
-        </div>
-      )}
+      {showNewPoints && <NewPointsNotification points={newPoints} />}
 
-      <PointCard totalPoints={totalPoints} recentPoints={recentPoints} />
+      <PointCard username={usernameMock} totalPoints={totalPoints} recentPoints={recentPointsMock} />
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Gift className="h-5 w-5 text-primary" />
-            報酬
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {rewards.map((reward, index) => (
-              <div key={index} className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="font-medium">{reward.name}</span>
-                  <span className="text-sm text-muted-foreground">
-                    {totalPoints >= reward.points
-                      ? reward.claimed
-                        ? "獲得済み"
-                        : "獲得可能"
-                      : `あと${reward.points - totalPoints}ポイント`}
-                  </span>
-                </div>
-                <Progress value={(totalPoints / reward.points) * 100} max={100} className="h-2" />
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+      <Rewards totalPoints={totalPoints} rewards={rewardsMock} />
 
       <Navigation />
     </main>
