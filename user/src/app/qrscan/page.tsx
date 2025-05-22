@@ -4,8 +4,8 @@ import { useState, useEffect, useRef } from "react"
 import { Html5Qrcode } from "html5-qrcode"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Navigation } from "@/components/ui/navigation"
 import { QrCode, X } from "lucide-react"
+import { MainLayout } from "@/components/layouts/main-layout"
 
 export default function QRScannerPage() {
   const [scanning, setScanning] = useState(false)
@@ -78,8 +78,7 @@ export default function QRScannerPage() {
 
   if (!isClient) {
     return (
-      <main className="container pb-28 pt-4">
-        <h1 className="mb-4 text-2xl font-bold">QRコードスキャナー</h1>
+      <MainLayout title="QRコードスキャナー">
         <Card className="mb-4">
           <CardHeader>
             <CardTitle>読み込み中...</CardTitle>
@@ -90,15 +89,12 @@ export default function QRScannerPage() {
             </div>
           </CardContent>
         </Card>
-        <Navigation />
-      </main>
+      </MainLayout>
     )
   }
 
   return (
-    <main className="container pb-28 pt-4">
-      <h1 className="mb-4 text-2xl font-bold">QRコードスキャナー</h1>
-
+    <MainLayout title="QRコードスキャナー">
       <Card className="mb-4">
         <CardHeader>
           <CardTitle>QRコードをスキャン</CardTitle>
@@ -136,8 +132,6 @@ export default function QRScannerPage() {
           )}
         </CardContent>
       </Card>
-
-      <Navigation />
-    </main>
+    </MainLayout>
   )
 }

@@ -1,10 +1,10 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Navigation } from "@/components/ui/navigation"
 import { PointCard } from "@/components/points/point-card"
 import { Rewards } from "@/components/points/rewards"
 import { NewPointsNotification } from "@/components/points/new-points-notification"
+import { MainLayout } from "@/components/layouts/main-layout"
 
 export default function PointsPage() {
   const [totalPoints, setTotalPoints] = useState(280)
@@ -55,16 +55,12 @@ export default function PointsPage() {
   ]
 
   return (
-    <main className="container pb-28 pt-4">
-      <h1 className="mb-4 text-2xl font-bold">ポイント</h1>
-
+    <MainLayout title="ポイント">
       {showNewPoints && <NewPointsNotification points={newPoints} />}
 
       <PointCard username={usernameMock} totalPoints={totalPoints} recentPoints={recentPointsMock} />
 
       <Rewards totalPoints={totalPoints} rewards={rewardsMock} />
-
-      <Navigation />
-    </main>
+    </MainLayout>
   )
 }

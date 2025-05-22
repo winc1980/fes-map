@@ -1,11 +1,11 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { Navigation } from "@/components/ui/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { MapPin, Utensils, Music, Gift } from "lucide-react"
 import Script from "next/script"
+import { MainLayout } from "@/components/layouts/main-layout"
 
 export default function MapPage() {
   const mapRef = useRef<HTMLDivElement>(null)
@@ -85,7 +85,7 @@ export default function MapPage() {
   }, [isClient])
 
   return (
-    <main className="container pb-28 pt-4">
+    <MainLayout title="マップ">
       {isClient && (
         <>
           {/* Leaflet CSS */}
@@ -105,8 +105,6 @@ export default function MapPage() {
           />
         </>
       )}
-
-      <h1 className="mb-4 text-2xl font-bold">マップ</h1>
 
       <Tabs defaultValue="map" className="mb-4">
         <TabsList className="grid w-full grid-cols-2">
@@ -169,8 +167,6 @@ export default function MapPage() {
           </Card>
         </TabsContent>
       </Tabs>
-
-      <Navigation />
-    </main>
+    </MainLayout>
   )
 }

@@ -11,7 +11,7 @@ export function Navigation() {
     <div className="fixed bottom-0 left-0 right-0 bg-white pb-safe shadow-lg">
       <div className="relative flex items-center justify-around px-2 py-3">
         {/* ホームボタン */}
-        <Link href="/" className="flex flex-col items-center justify-center space-y-1">
+        <Link href="/timeline" className="flex flex-col items-center justify-center space-y-1">
           <Clock className={`h-6 w-6 ${pathname === "/" ? "text-red-500" : "text-gray-500"}`} />
           <span className={`text-xs ${pathname === "/" ? "text-red-500" : "text-gray-500"}`}>タイムライン</span>
         </Link>
@@ -40,7 +40,7 @@ export function Navigation() {
         </Link>
 
         {/* アカウントボタン */}
-        <Link href="/" className="flex flex-col items-center justify-center space-y-1">
+        <Link href="/user" className="flex flex-col items-center justify-center space-y-1">
           <User className={`h-6 w-6 ${pathname === "/account" ? "text-red-500" : "text-gray-500"}`} />
           <span className={`text-xs ${pathname === "/account" ? "text-red-500" : "text-gray-500"}`}>アカウント</span>
         </Link>
