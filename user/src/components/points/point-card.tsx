@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Trophy } from "lucide-react"
 
 interface PointCardProps {
+  username: string
   totalPoints: number
   recentPoints?: {
     amount: number
@@ -10,13 +11,13 @@ interface PointCardProps {
   }[]
 }
 
-export function PointCard({ totalPoints, recentPoints = [] }: PointCardProps) {
+export function PointCard({ username, totalPoints, recentPoints = [] }: PointCardProps) {
   return (
     <Card className="mb-4">
       <CardHeader className="pb-2">
-        <CardTitle className="flex items-center gap-2 text-xl">
+        <CardTitle className="flex items-center justify-center gap-2 text-xl">
           <Trophy className="h-5 w-5 text-yellow-500" />
-          現在のポイント
+          {username}さんのポイント
         </CardTitle>
       </CardHeader>
       <CardContent>
