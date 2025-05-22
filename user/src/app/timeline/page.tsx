@@ -48,7 +48,6 @@ const timelineItems = [
 export default function Home() {
   return (
     <MainLayout title="タイムライン">
-      <h1 className="mb-4 text-2xl font-bold">タイムライン</h1>
       <div>
         {timelineItems.map((item) => (
           <TimelineItem key={item.id} {...item} />
