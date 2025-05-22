@@ -1,5 +1,5 @@
-import { Navigation } from "../components/ui/navigation"
-import { TimelineItem } from "../components/ui/timeline-item"
+import { TimelineItem } from "../../components/ui/timeline-item"
+import { MainLayout } from "@/components/layouts/main-layout"
 
 // サンプルデータ
 const timelineItems = [
@@ -33,18 +33,27 @@ const timelineItems = [
     timestamp: new Date(Date.now() - 1000 * 60 * 120),
     points: 100,
   },
+  {
+    id: "4",
+    user: {
+      name: "鈴木一郎",
+      avatar: "/placeholder.svg?height=40&width=40",
+    },
+    content: "QRコードをスキャンしてポイントゲット！あと少しでプレゼントがもらえそう。",
+    timestamp: new Date(Date.now() - 1000 * 60 * 120),
+    points: 100,
+  },
 ]
 
 export default function Home() {
   return (
-    <main className="container pb-28 pt-4">
+    <MainLayout title="タイムライン">
       <h1 className="mb-4 text-2xl font-bold">タイムライン</h1>
       <div>
         {timelineItems.map((item) => (
           <TimelineItem key={item.id} {...item} />
         ))}
       </div>
-      <Navigation />
-    </main>
+    </MainLayout>
   )
 }

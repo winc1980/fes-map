@@ -1,15 +1,15 @@
 "use client"
 
-import { Navigation } from "@/components/ui/navigation"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Settings, LogOut, Gift, Award, History } from "lucide-react"
+import { MainLayout } from "@/components/layouts/main-layout"
 
 export default function AccountPage() {
   return (
-    <main className="container pb-28 pt-4">
+    <MainLayout title="アカウント">
       <h1 className="mb-4 text-2xl font-bold">アカウント</h1>
 
       <Card className="mb-6">
@@ -55,8 +55,6 @@ export default function AccountPage() {
           <span>ログアウト</span>
         </Button>
       </div>
-
-      <Navigation />
-    </main>
+    </MainLayout>
   )
 }
