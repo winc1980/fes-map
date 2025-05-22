@@ -1,25 +1,21 @@
-# fes-map
-
-## アーキテクチャ図
-
 ```mermaid
 architecture-beta
     group client[Client Apps]
-    service PrivateApi(cloud)[GraphQL]
+    service PrivateApi(logos:graphql)[GraphQL]
 
-    service CAS(internet)[Maru Students] in client
-    service CAA(internet)[Maru Admins] in client
-    service FMA(internet)[FesMap Admins] in client
-    service FMV(internet)[FesMap Visitors] in client
+    service CAS(logos:flutter)[Maru Students] in client
+    service CAA(logos:flutter)[Maru Admins] in client
+    service FMA(logos:nextjs)[FesMap Admins] in client
+    service FMV(logos:nextjs)[FesMap Visitors] in client
 
-    group api(cloud)[Serverless Api]
-      service ApiGw(server)[API Gateway] in api
-      service Auth(cloud)[Auth Service] in api
-      service Authorize(cloud)[Authorize Service] in api
-      service Supabase(database)[Supabase Postgres] in api
-      service Wasabi(disk)[Wasabi AWSS3] in api
+    group api(logos:firebase)[Serverless Api]
+      service ApiGw(logos:google-cloud)[API Gateway] in api
+      service Auth(logos:firebase)[Auth Service] in api
+      service Authorize(logos:firebase)[Authorize Service] in api
+      service Supabase(logos:supabase-icon)[Supabase Postgres] in api
+      service Wasabi(logos:aws-s3)[Wasabi AWSS3] in api
       service Ext1(internet)[LIFF API] in api
-      service Ext2(internet)[MapBox API] in api
+      service Ext2(logos:mapbox-icon)[MapBox API] in api
 
     %%group mainApi(logos:aws-lambda)[Main Api] in api
       %%service UserInfo(database)[User Info] in mainApi
