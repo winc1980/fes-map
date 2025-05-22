@@ -13,7 +13,8 @@ architecture-beta
     service FMV(internet)[FesMap Visitors] in client
 
     group api(cloud)[Serverless Api]
-      service ApiGw(server)[API Gateway] in api
+      group apiGw [API Gateway] in api
+        service cloudFunctions(server)[Cloud Functions] in apiGw
       service Auth(cloud)[Auth Service] in api
       service Authorize(cloud)[Authorize Service] in api
       service Supabase(database)[Supabase Postgres] in api
@@ -48,7 +49,7 @@ architecture-beta
   jAppsApi3:B -- T:jAppsApi4
   jAppsApic:R -- L:PrivateApi
 
-  PrivateApi:R -- L:ApiGw
+  PrivateApi:R -- L:cloudFunctions
 
 
   junction jGwExt1
@@ -70,6 +71,6 @@ architecture-beta
   jGwExt3:B -- T:jGwExt4
   jGwExt4:B -- T:jGwExt5
   jGwExt5:B -- T:jGwExt6
-  jGwExt3:L -- R:ApiGw
+  jGwExt3:L -- R:cloudFunctions
 
 ```
