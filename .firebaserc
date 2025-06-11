@@ -1,0 +1,15 @@
+{
+  "projects": {
+    "default": "circle-app-project"
+  },
+  "targets": {
+    "circle-app-project": {
+      "hosting": {
+        "fesmap-manage": [
+          "circle-app-project-fd880"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}

@@ -1,11 +1,6 @@
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+import { initializeApp, getApps, getApp } from "firebase/app";
+import { getAnalytics, logEvent, isSupported } from "firebase/analytics";
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
@@ -16,6 +11,18 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+// Firebaseの初期化（既に初期化済みでない場合のみ）
+const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+
+// Analyticsのインスタンスをエクスポート
+// ブラウザで実行されている場合、かつAnalyticsがサポートされている場合のみ初期化
+export const analytics = typeof window !== 'undefined' && (await isSupported())
+  ? getAnalytics(app)
+  : null;
+
+// 特定のイベントを記録するためのヘルパー関数もエクスポートしておくと便利
+export const logAnalyticsEvent = (eventName: string, params?:  Record<string, unknown>) => {
+  if (analytics) {
+    logEvent(analytics, eventName, params);
+  }
+};
