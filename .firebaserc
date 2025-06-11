@@ -7,6 +7,9 @@
       "hosting": {
         "fesmap-manage": [
           "circle-app-project-fd880"
+        ],
+        "fesmap-user":[
+          "circle-app-project"
         ]
       }
     }
