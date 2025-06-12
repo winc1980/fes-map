@@ -5,13 +5,7 @@ import type React from "react";
 import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { formatDistanceToNow } from "date-fns";
 import { ja } from "date-fns/locale";
 import {
@@ -30,6 +24,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { timelineItem } from "@/types";
+import Image from "next/image";
 
 export function TimelineItem({
   pabilion,
@@ -43,7 +38,7 @@ export function TimelineItem({
   const [likeCount, setLikeCount] = useState(like);
   const [saved, setSaved] = useState(false);
   const [showComments, setShowComments] = useState(false);
-  const [newComment, setNewComment] = useState("");
+  // const [newComment, setNewComment] = useState("");
 
   const handleLike = () => {
     if (liked) {
@@ -82,10 +77,12 @@ export function TimelineItem({
       {photos && photos.length > 0 && (
         <div className="relative">
           {photos.length === 1 ? (
-            <img
+            <Image
               src={photos[0] || "/placeholder.svg"}
               alt="投稿画像"
               className="w-full aspect-square object-cover"
+              layout="fill"
+              objectFit="cover"
             />
           ) : (
             <Carousel className="w-full">
@@ -93,10 +90,12 @@ export function TimelineItem({
                 {photos.map((photo, index) => (
                   <CarouselItem key={index}>
                     <div className="flex aspect-square items-center justify-center">
-                      <img
+                      <Image
                         src={photo || "/placeholder.svg"}
                         alt={`投稿画像 ${index + 1}`}
                         className="w-full h-full object-cover"
+                        layout="fill"
+                        objectFit="cover"
                       />
                     </div>
                   </CarouselItem>

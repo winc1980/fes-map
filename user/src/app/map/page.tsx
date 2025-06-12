@@ -1,195 +1,203 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { MapPin, Utensils, Music, Gift } from "lucide-react";
-import Script from "next/script";
+import type React from "react";
+
+import { useState, useRef, useEffect } from "react";
 import { MainLayout } from "@/components/layouts/main-layout";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Music, Utensils, Gift, MapPin } from "lucide-react";
+// import MapboxLanguage from "@mapbox/mapbox-gl-language";
+import mapboxgl from "mapbox-gl";
+import type { Spot } from "@/types";
+import { cn } from "@/lib/utils";
+
+declare global {
+  interface Window {
+    mapboxgl: typeof mapboxgl;
+  }
+}
+
+const spots: Spot[] = [
+  {
+    id: "main-stage",
+    name: "メインステージ",
+    description: "主要なパフォーマンスが行われるエリアです。",
+    coordinates: [139.7202, 35.7089], // 早稲田大学近辺
+    color: "#ef4444",
+    icon: <Music className="h-5 w-5" />,
+  },
+  {
+    id: "food-area",
+    name: "フードエリア",
+    description: "様々な飲食店が出店しているエリアです。",
+    coordinates: [139.7195, 35.7095],
+    color: "#f59e0b",
+    icon: <Utensils className="h-5 w-5" />,
+  },
+  {
+    id: "goods-shop",
+    name: "グッズショップ",
+    description: "オフィシャルグッズを購入できるエリアです。",
+    coordinates: [139.721, 35.7085],
+    color: "#10b981",
+    icon: <Gift className="h-5 w-5" />,
+  },
+  {
+    id: "rest-area",
+    name: "休憩エリア",
+    description: "ゆっくり休憩できるスペースです。",
+    coordinates: [139.7188, 35.708],
+    color: "#3b82f6",
+    icon: <MapPin className="h-5 w-5" />,
+  },
+];
 
 export default function MapPage() {
-  const mapRef = useRef<HTMLDivElement>(null);
-  const mapInitializedRef = useRef(false);
-  const [isClient, setIsClient] = useState(false);
+  const [activeView, setActiveView] = useState<"map" | "list">("map");
+  const mapContainer = useRef<HTMLDivElement>(null);
+  const map = useRef<mapboxgl.Map | null>(null);
 
-  // クライアントサイドでのみレンダリングされるようにする
   useEffect(() => {
-    setIsClient(true);
-  }, []);
+    if (activeView === "map") {
+      if (!map.current) {
+        // 初回のマップ初期化
+        const script = document.createElement("script");
+        script.src = "https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.js";
+        script.onload = initializeMap;
+        document.head.appendChild(script);
 
-  // Leafletが読み込まれた後にマップを初期化する関数
-  const initializeMap = useCallback(() => {
-    if (!isClient || !mapRef.current || mapInitializedRef.current || !window.L)
-      return;
-
-    mapInitializedRef.current = true;
-
-    try {
-      // 東京ビッグサイトの座標
-      const map = window.L.map(mapRef.current).setView([35.6298, 139.7962], 16);
-
-      window.L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution:
-          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      }).addTo(map);
-
-      // サンプルのマーカーを追加
-      const mainStageIcon = window.L.divIcon({
-        html: `<div class="bg-red-500 text-white p-1 rounded-full flex items-center justify-center" style="width: 30px; height: 30px;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m12 8-9.04 9.06a2.82 2.82 0 1 0 3.98 3.98L16 12"/><circle cx="17" cy="7" r="5"/></svg></div>`,
-        className: "",
-      });
-
-      const foodIcon = window.L.divIcon({
-        html: `<div class="bg-yellow-500 text-white p-1 rounded-full flex items-center justify-center" style="width: 30px; height: 30px;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2"/><path d="M18 15V2"/><path d="M21 15a3 3 0 1 1-6 0"/></svg></div>`,
-        className: "",
-      });
-
-      const shopIcon = window.L.divIcon({
-        html: `<div class="bg-green-500 text-white p-1 rounded-full flex items-center justify-center" style="width: 30px; height: 30px;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/></svg></div>`,
-        className: "",
-      });
-
-      // マーカーを追加
-      window.L.marker([35.6298, 139.7962], { icon: mainStageIcon })
-        .addTo(map)
-        .bindPopup("メインステージ");
-      window.L.marker([35.6305, 139.7975], { icon: foodIcon })
-        .addTo(map)
-        .bindPopup("フードエリア");
-      window.L.marker([35.629, 139.795], { icon: shopIcon })
-        .addTo(map)
-        .bindPopup("グッズショップ");
-    } catch (error) {
-      console.error("マップの初期化に失敗しました:", error);
-    }
-  }, [isClient, mapRef, mapInitializedRef]);
-
-  // Leafletスクリプトが読み込まれたときのコールバック
-  const handleLeafletLoad = () => {
-    initializeMap();
-  };
-
-  // コンポーネントがマウントされたときにマップを初期化
-  useEffect(() => {
-    // window.Lが既に存在する場合は直接初期化
-    if (isClient && window.L) {
-      initializeMap();
-    }
-
-    return () => {
-      // クリーンアップ処理
-      if (isClient && mapInitializedRef.current && window.L && mapRef.current) {
-        const currentMapRef = mapRef.current;
-        // マップのインスタンスを取得できれば削除
-        try {
-          const mapInstance = window.L.DomUtil.get(currentMapRef);
-          if (mapInstance) {
-            mapInstance.remove();
+        const link = document.createElement("link");
+        link.href = "https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.css";
+        link.rel = "stylesheet";
+        document.head.appendChild(link);
+      } else {
+        // マップビューに戻った時の処理
+        setTimeout(() => {
+          if (map.current) {
+            map.current.resize();
           }
-        } catch (e) {
-          console.error("マップのクリーンアップに失敗しました:", e);
-        }
+        }, 100);
       }
-    };
-  }, [isClient, initializeMap]);
+    }
+  }, [activeView]);
+
+  const initializeMap = () => {
+    if (!mapContainer.current || map.current) return;
+
+    mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN;
+
+    map.current = new mapboxgl.Map({
+      container: mapContainer.current,
+      style: "mapbox://styles/mapbox/streets-v12",
+      center: [139.72, 35.7087], // 早稲田大学周辺
+      zoom: 16,
+    });
+
+    // マーカーを追加
+    spots.forEach((spot) => {
+      // カスタムマーカー要素を作成
+      const markerElement = document.createElement("div");
+      markerElement.className = "custom-marker";
+      markerElement.style.cssText = `
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: ${spot.color};
+        border: 3px solid white;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: white;
+        font-weight: bold;
+        font-size: 18px;
+      `;
+      markerElement.innerHTML = "●";
+
+      new mapboxgl.Marker(markerElement)
+        .setLngLat(spot.coordinates)
+        .setPopup(
+          new mapboxgl.Popup({ offset: 25 }).setHTML(`
+              <div style="padding: 8px;">
+                <h3 style="margin: 0 0 4px 0; font-weight: bold;">${spot.name}</h3>
+                <p style="margin: 0; font-size: 14px; color: #666;">${spot.description}</p>
+              </div>
+            `)
+        )
+        .addTo(map.current!);
+    });
+  };
 
   return (
     <MainLayout title="マップ">
-      {isClient && (
-        <>
-          {/* Leaflet CSS */}
-          <link
-            rel="stylesheet"
-            href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-            integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-            crossOrigin=""
-          />
+      <div className="w-full max-w-4xl mx-auto bg-white">
+        {/* トグルボタン */}
+        <div className="flex bg-gray-100 p-1 rounded-lg mb-4">
+          <Button
+            variant={activeView === "map" ? "default" : "ghost"}
+            className={cn(
+              "flex-1 rounded-md",
+              activeView === "map" ? "bg-white shadow-sm text-gray-600" : ""
+            )}
+            onClick={() => setActiveView("map")}
+          >
+            マップ
+          </Button>
+          <Button
+            variant={activeView === "list" ? "default" : "ghost"}
+            className={cn(
+              "flex-1 rounded-md",
+              activeView === "list" ? "bg-white shadow-sm text-gray-600" : ""
+            )}
+            onClick={() => setActiveView("list")}
+          >
+            リスト
+          </Button>
+        </div>
 
-          {/* Leaflet JS */}
-          <Script
-            src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-            crossOrigin=""
-            onLoad={handleLeafletLoad}
-          />
-        </>
-      )}
-
-      <Tabs defaultValue="map" className="mb-4">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="map">マップ</TabsTrigger>
-          <TabsTrigger value="list">リスト</TabsTrigger>
-        </TabsList>
-        <TabsContent value="map">
-          <Card>
-            <CardContent className="p-0">
-              <div ref={mapRef} className="h-[60vh] w-full"></div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-        <TabsContent value="list">
-          <Card>
-            <CardHeader>
-              <CardTitle>会場案内</CardTitle>
-              <CardDescription>イベント会場の主要スポット</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="flex items-start gap-3">
-                  <div className="rounded-full bg-red-100 p-2 text-red-500">
-                    <Music className="h-5 w-5" />
+        {/* コンテンツエリア */}
+        <div className="relative">
+          {activeView === "map" ? (
+            <div className="w-full h-[600px] rounded-lg overflow-hidden border">
+              <div ref={mapContainer} className="w-full h-full" />
+            </div>
+          ) : (
+            <Card>
+              <CardHeader>
+                <CardTitle>会場案内</CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  イベント会場の主要スポット
+                </p>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {spots.map((spot) => (
+                  <div
+                    key={spot.id}
+                    className="flex items-start gap-4 p-4 rounded-lg border"
+                  >
+                    <div
+                      className="flex items-center justify-center w-12 h-12 rounded-full text-white"
+                      style={{ backgroundColor: spot.color }}
+                    >
+                      {spot.icon}
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-lg mb-1">
+                        {spot.name}
+                      </h3>
+                      <p className="text-muted-foreground">
+                        {spot.description}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="font-medium">メインステージ</h3>
-                    <p className="text-sm text-muted-foreground">
-                      主要なパフォーマンスが行われるエリアです。
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="rounded-full bg-yellow-100 p-2 text-yellow-500">
-                    <Utensils className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <h3 className="font-medium">フードエリア</h3>
-                    <p className="text-sm text-muted-foreground">
-                      様々な飲食店が出店しているエリアです。
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="rounded-full bg-green-100 p-2 text-green-500">
-                    <Gift className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <h3 className="font-medium">グッズショップ</h3>
-                    <p className="text-sm text-muted-foreground">
-                      オフィシャルグッズを購入できるエリアです。
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="rounded-full bg-blue-100 p-2 text-blue-500">
-                    <MapPin className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <h3 className="font-medium">休憩エリア</h3>
-                    <p className="text-sm text-muted-foreground">
-                      ゆっくり休憩できるスペースです。
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+                ))}
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      </div>
     </MainLayout>
   );
 }

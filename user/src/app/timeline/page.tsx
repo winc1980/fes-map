@@ -6,7 +6,7 @@ import { timelineItem } from "@/types"
 const FES_START_DATE = new Date('2025-11-01T09:00:00');
 const FES_END_DATE = new Date('2025-11-03T18:00:00');
 // サンプルデータ
-export const timelineItems: timelineItem[] = [
+const timelineItems: timelineItem[] = [
   {
     id: 'post-001',
     pabilion: {
